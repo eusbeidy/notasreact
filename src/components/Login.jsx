@@ -1,18 +1,19 @@
-import React, {useState} from 'react';
+import React, { useState } from "react";
+import { saveUser, getUser } from "./localStorageFunctions";
 
-
-function App() {
-  const [username, setUsername] = useState("");
+function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleRegister = (event) => {
+  const handleLogin = (event) => {
     event.preventDefault();
-    if (getUser(email)) {
-      setError("User with this email already exists");
+    const user = getUser(email);
+    if (!user) {
+      setError("User not found");
+    } else if (user.password !== password) {
+      setError("Invalid password");
     } else {
-      saveUser({ username, email, password });
       localStorage.setItem("loggedIn", true);
       // Redirect user to logged in page
     }
@@ -20,14 +21,8 @@ function App() {
 
   return (
     <div>
-      <h1>Register</h1>
-      <form onSubmit={handleRegister}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
+      <h1>Login</h1>
+      <form onSubmit={handleLogin}>
         <input
           type="email"
           placeholder="Email"
@@ -40,12 +35,9 @@ function App() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit">Register</button>
+        <button type="submit">Login</button>
         {error && <div>{error}</div>}
       </form>
     </div>
   );
 }
-
-
-export default App;
